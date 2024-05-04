@@ -1,5 +1,7 @@
 package com.tolgakumbul
 
+import com.globalmentor.apache.hadoop.fs.BareLocalFileSystem
+import org.apache.hadoop.fs.FileSystem
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
@@ -21,6 +23,7 @@ object MongoReadSpark {
 
         val conf = new SparkConf()
         val spark = SparkSession.builder().config(conf).getOrCreate()
+        spark.sparkContext.hadoopConfiguration.setClass("fs.file.impl", classOf[BareLocalFileSystem], classOf[FileSystem])
 
 
         val testFromConf = spark.conf.get("spark.test.name")
@@ -101,9 +104,18 @@ object MongoReadSpark {
         val javaRddJson = JsonConverterHelper.convertToJson(javaRddFirst)
         println("JavaRdd converted into Json via helper : " + javaRddJson)
 
+
+        /*
+         * Writing mongodb df to csv
+         */
+        spark.time{
+            df.withColumn("authors", col("authors").cast("string"))
+              .withColumn("categories", col("categories").cast("string"))
+              .write.option("header", "true")
+              .format("com.databricks.spark.csv")
+              .save("C:/Users/USER/Documents/SparkOutput/output.csv")
+        }
+
         spark.stop()
-    }
-    def someFunction(): Unit = {
-      println("This is from MyTestClass")
     }
 }

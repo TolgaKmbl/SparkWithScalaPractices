@@ -16,6 +16,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.globalmentor</groupId>
+            <artifactId>hadoop-bare-naked-local-fs</artifactId>
+            <version>0.1.0</version>
+        </dependency>
         <!-- Scala library -->
         <dependency>
             <groupId>org.scala-lang</groupId>
